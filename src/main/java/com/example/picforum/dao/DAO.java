@@ -9,9 +9,9 @@ import java.sql.SQLException;
 public class DAO {
 
     // 数据库连接信息
-    private static final String URL = "jdbc:mysql://localhost:3306/pic_forum";
-    private static final String USER = "root";
-    private static final String PASSWORD = "12341948";
+    private static final String URL = "jdbc:mysql://db4free.net:3306/pic_forum";
+    private static final String USER = "picforum";
+    private static final String PASSWORD = "20230605";
 
     // 获取数据库连接
     protected Connection getConnection() {
