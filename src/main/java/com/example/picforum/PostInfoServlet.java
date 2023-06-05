@@ -1,8 +1,10 @@
 package com.example.picforum;
 
+import com.alibaba.fastjson.JSON;
 import com.example.picforum.dao.PostInfoDao;
 import com.example.picforum.model.PostInfo;
 import com.example.picforum.model.PostInfoReply;
+import com.example.picforum.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/post")
@@ -36,7 +39,6 @@ public class PostInfoServlet extends HttpServlet {
             IOException {
 
         request.setCharacterEncoding("UTF-8");  // 设置请求编码为UTF-8
-
         String action = request.getParameter("action");  // 获取请求参数action
 
         switch (action) {
@@ -55,8 +57,14 @@ public class PostInfoServlet extends HttpServlet {
             case "delete":   // 如果action为delete，则调用删除方法
                 delete(request, response);
                 break;
+            case "search":
+                search(request, response);
+                break;
+            case "listByPage":
+                listByPage(request, response);
+                break;
             default:
-                response.sendError(404, "Invalid action");  // 否则返回错误信息
+                response.sendError(404, "错误请求: "+action);  // 否则返回错误信息
                 break;
         }
     }
@@ -106,6 +114,84 @@ public class PostInfoServlet extends HttpServlet {
         //System.out.println(postList);
     }
 
+    // 根据页码和类型查询帖子列表的方法
+    private void listByPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 获取页码参数
+        String pageStr = request.getParameter("page");
+        // 验证页码是否为空或非数字
+        if (pageStr == null || pageStr.isEmpty()) {
+            // 返回错误信息
+            response.sendError(400, "Page number is required");
+            return;
+        }
+        int page = 0;
+        try {
+            page = Integer.parseInt(pageStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            // 返回错误信息
+            response.sendError(400, "Page number must be a number");
+            return;
+        }
+        // 获取类型参数
+        String type = request.getParameter("type");
+        // 验证类型是否为空或非法（只能是show或apo）
+        if (type == null || type.isEmpty() || (!type.equals("show") && !type.equals("apo") && !type.equals("all"))) {
+            // 返回错误信息
+            type = "all";
+        }
+        // 调用数据库操作类，根据页码和类型查询帖子列表数据，返回一个List<PostInfo>对象
+        List<PostInfo> postList = dao.getPostListByPageAndType(page,5, type);
+        // 设置响应内容类型为json
+        response.setContentType("application/json;charset=utf-8");
+        // 获取响应输出流
+        PrintWriter out = response.getWriter();
+        // 将List<PostInfo>对象转换为json字符串，并输出到响应中
+        out.print(JSON.toJSONString(postList));
+    }
+
+    // 根据关键字搜索帖子列表的方法
+    private void search(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 获取关键字参数
+        String keyword = request.getParameter("keyword");
+        // 验证关键字是否为空或过长（超过50个字符）
+        if (keyword == null || keyword.isEmpty() || keyword.length() > 50) {
+            // 返回错误信息
+            response.sendError(400, "Keyword is invalid");
+            return;
+        }
+        // 获取页码参数
+        String pageStr = request.getParameter("page");
+        // 验证页码是否为空或非数字
+        if (pageStr == null || pageStr.isEmpty()) {
+            // 返回错误信息
+            pageStr = "1";
+        }
+        int page = 1;
+        try {
+            page = Integer.parseInt(pageStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            // 返回错误信息
+            response.sendError(400, "Page number must be a number");
+            return;
+        }
+        // 定义每页显示的记录数
+        int recordsPerPage = 10;
+        // 调用数据库操作类，根据关键字和页码模糊查询帖子列表数据，返回一个List<PostInfo>对象
+        List<PostInfo> postList = dao.getPostListByKeywordAndPage(keyword, (page - 1) * recordsPerPage, recordsPerPage);
+        // 调用数据库操作类，根据关键字查询符合条件的总记录数
+        int noOfRecords = dao.getNoOfRecordsByKeyword(keyword);
+        // 计算总页数
+        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+        // 设置request属性，存储帖子列表数据，关键字，总页数和当前页码
+        request.setAttribute("postList", postList);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("noOfPages", noOfPages);
+        request.setAttribute("currentPage", page);
+        // 转发到post_search.jsp页面，显示搜索结果和分页导航栏
+        request.getRequestDispatcher("post_search.jsp").forward(request, response);
+    }
     // 详情方法
     private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取帖子id参数
@@ -216,17 +302,15 @@ public class PostInfoServlet extends HttpServlet {
             response.sendError(400, "Post type is invalid");
             return;
         }
-        // 获取发帖用户id参数（这里假设已经登录，从session中获取）
-        int postUid = (int) request.getSession().getAttribute("uid");
         // 获取发帖用户名参数（这里假设已经登录，从session中获取）
-        String postName = (String) request.getSession().getAttribute("username");
+        User user = (User) request.getSession().getAttribute("user");
         // 封装PostInfo对象
         PostInfo post = new PostInfo();
         post.setTitle(title);
         post.setContent(content);
         post.setType(type);
-        post.setPostUid(postUid);
-        post.setPostName(postName);
+        post.setPostUid(user.getUid());
+        post.setPostName(user.getUsername());
         // 调用数据库操作类，添加新帖子数据，返回是否成功的标志
         boolean result = dao.addNewPost(post);
         if (result) {

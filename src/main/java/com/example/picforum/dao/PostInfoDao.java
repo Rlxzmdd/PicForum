@@ -383,4 +383,115 @@ public class PostInfoDao extends DAO {
         }
         return postList;
     }
+    // 根据关键字搜索帖子列表的方法
+    public List<PostInfo> getPostListByKeyword(String keyword) {
+        List<PostInfo> postList = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            // 获取连接，调用父类DAO的方法
+            conn = getConnection();
+            // 定义sql语句，使用LIKE关键字进行模糊查询，使用%作为通配符
+            String sql = "SELECT * FROM pic_post_info WHERE title LIKE ? OR content LIKE ?";
+            // 预编译sql语句
+            ps = conn.prepareStatement(sql);
+            // 设置参数，第一个参数和第二个参数都是关键字，前后加上%表示匹配任意字符
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            // 执行查询
+            rs = ps.executeQuery();
+            // 遍历结果集，封装PostInfo对象，添加到列表中
+            while (rs.next()) {
+                PostInfo post = new PostInfo();
+                post.setPid(rs.getInt("pid"));
+                post.setTitle(rs.getString("title"));
+                post.setContent(rs.getString("content"));
+                post.setType(rs.getString("type"));
+                post.setPostUid(rs.getInt("post_uid"));
+                post.setPostName(rs.getString("post_name"));
+                post.setTimeUpdate(rs.getTimestamp("time_update"));
+                postList.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源，调用父类DAO的方法
+            closeResource(conn, ps, rs);
+        }
+        return postList;
+    }
+
+    // 根据关键字查询符合条件的总记录数
+    public int getNoOfRecordsByKeyword(String keyword) {
+        // 定义返回值变量
+        int count = 0;
+        // 返回总记录数
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select count(*) from pic_post_info where pid like ?";
+            // 获取数据库连接
+            conn = getConnection();
+            // 创建预编译语句对象
+            ps = conn.prepareStatement(sql);
+            // 设置参数，使用%作为通配符
+            ps.setString(1, "%" + keyword + "%");
+            // 执行查询，获取结果集
+            rs = ps.executeQuery();
+            // 判断结果集是否有数据
+            if (rs.next()) {
+                // 获取第一列的值，即总记录数
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源，调用父类DAO的方法
+            closeResource(conn, ps, rs);
+        }
+        return count;
+    }
+
+    // 根据关键字和页码模糊查询帖子列表数据，返回一个List<PostInfo>对象
+    public List<PostInfo> getPostListByKeywordAndPage(String keyword, int start, int limit) {
+        // 定义返回值变量，使用ArrayList存储PostInfo对象
+        List<PostInfo> list = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select * from pic_post_info where title like ? OR content LIKE ? limit ?, ?";
+            // 获取数据库连接
+            conn = getConnection();
+            // 创建预编译语句对象
+            ps = conn.prepareStatement(sql);
+            // 设置参数，使用%作为通配符，start和limit作为分页参数
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            ps.setInt(3, start);
+            ps.setInt(4, limit);
+            // 执行查询，获取结果集
+            rs = ps.executeQuery();
+            // 遍历结果集，将每一行数据封装成PostInfo对象，并添加到list中
+            while (rs.next()) {
+                PostInfo post = new PostInfo();
+                post.setPid(rs.getInt("pid"));
+                post.setTitle(rs.getString("title"));
+                post.setContent(rs.getString("content"));
+                post.setType(rs.getString("type"));
+                post.setPostUid(rs.getInt("post_uid"));
+                post.setPostName(rs.getString("post_name"));
+                post.setTimeUpdate(rs.getTimestamp("time_update"));
+                list.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源，调用父类DAO的方法
+            closeResource(conn, ps, rs);
+        }
+        return list;
+    }
 }

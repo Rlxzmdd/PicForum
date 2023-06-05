@@ -1,4 +1,9 @@
-<!-- 在页面中使用JSTL标签库 -->
+<!-- 注意此文件大概率废弃 -->
+<!-- 注意此文件大概率废弃 -->
+<!-- 注意此文件大概率废弃 -->
+<!-- 注意此文件大概率废弃 -->
+<!-- 注意此文件大概率废弃 -->
+<!-- 注意此文件大概率废弃 -->
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
