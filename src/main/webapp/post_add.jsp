@@ -112,7 +112,7 @@
             <input type="hidden" name="postUid" value="<%= user.getUid() %>">
             <input type="hidden" name="postName" value="<%= user.getUsername() %>">
             标题：<input type="text" name="title"><br/>
-            类型：<input type="radio" name="type" value="show">分享
+            类型：<input type="radio" name="type" value="show" checked>分享
             <input type="radio" name="type" value="apo">约拍<br/>
             内容：<textarea  name="content" id="content"></textarea><br/>
                 <a href="index.jsp" >返回</a>

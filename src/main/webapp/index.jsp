@@ -317,7 +317,7 @@
     <div id="post-list">
         <% for (PostInfo post : postList) { %>
             <div class="post-card" style="margin: 10px; padding: 10px;">
-                <img src="#">
+                <img src="image/image<%=post.getPid()%>.jpg">
                 <p class="post-title"><%= post.getTitle() %>
                 </p>
                 <p class="post-content"><%= post.getContent() %>

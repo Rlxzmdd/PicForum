@@ -82,6 +82,7 @@
         img{
             max-width: 100%;
             max-height: 700px;
+            margin:0 auto;
         }
         .img_container {
             white-space: nowrap;
@@ -146,10 +147,11 @@
 <% List<PostInfoReply> replyList = (List<PostInfoReply>) request.getAttribute("replyList"); %>
 
 <%-- 显示帖子标题，内容，类型，发帖用户名和更新时间 --%>
+
 <div class="img_container">
-        <div class="item"><img src="image/image1.jpeg" /></div>
-        <div class="item"><img src="image/image2.jpg" /></div>
-        <div class="item"><img src="image/image3.jpg" /></div>
+        <div class="item"><img src="image/image<%=post.getPid()%>.jpg" /></div>
+<%--        <div class="item"><img src="image/image2.jpg" /></div>--%>
+<%--        <div class="item"><img src="image/image1.jpg" /></div>--%>
 </div>
 <p class="title"><%= post.getTitle() %>
 </p>

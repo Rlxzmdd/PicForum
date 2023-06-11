@@ -383,7 +383,7 @@
 <% for (PostInfo post : postList) { %>
     <a href="post?action=detail&pid=<%= post.getPid() %>">
 <div class="post-card"style="margin: 10px; padding: 10px;">
-      <img src="image/image1.jpeg">
+      <img src="image/image5.jpg">
         <p class="post-title"><%= post.getTitle() %>
         </p>
         <p class="post-content"><%= post.getContent() %>
