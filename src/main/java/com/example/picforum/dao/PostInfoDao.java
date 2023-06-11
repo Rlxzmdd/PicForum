@@ -120,6 +120,34 @@ public class PostInfoDao extends DAO {
         }
         return result;
     }
+    public boolean deletePostReplyByPid(int rid) {
+        boolean result = false;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            // 获取连接
+            conn = getConnection();
+            // 定义sql语句
+            String sql = "DELETE FROM pic_post_info_reply WHERE rid = ?";
+            // 预编译sql语句
+            ps = conn.prepareStatement(sql);
+            // 设置参数，第一个参数是帖子id
+            ps.setInt(1, rid);
+            // 执行更新操作，返回影响的行数
+            int rows = ps.executeUpdate();
+            // 判断是否更新成功，如果影响的行数大于0，则表示成功，否则表示失败
+            if (rows > 0) {
+                result = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+            closeResource(conn, ps, null);
+        }
+        return result;
+    }
+
 
     // 根据页码和每页记录数查询帖子列表数据
     public List<PostInfo> getPostListByPage(int page, int size) {
@@ -314,7 +342,7 @@ public class PostInfoDao extends DAO {
             // 获取连接
             conn = getConnection();
             // 定义sql语句
-            String sql = "SELECT * FROM pic_post_reply WHERE post_uid = ?";
+            String sql = "SELECT * FROM pic_post_info_reply WHERE post_uid = ?";
             // 预编译sql语句
             ps = conn.prepareStatement(sql);
             // 设置参数
@@ -431,13 +459,14 @@ public class PostInfoDao extends DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "select count(*) from pic_post_info where pid like ?";
+            String sql = "select count(*) from pic_post_info where title like ? OR content LIKE ?";
             // 获取数据库连接
             conn = getConnection();
             // 创建预编译语句对象
             ps = conn.prepareStatement(sql);
             // 设置参数，使用%作为通配符
             ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
             // 执行查询，获取结果集
             rs = ps.executeQuery();
             // 判断结果集是否有数据

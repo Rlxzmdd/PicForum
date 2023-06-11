@@ -227,7 +227,7 @@
 
             <div class="menu">
                 <a href="index.jsp">首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="post_list.jsp">分享</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--                <a href="post_list.jsp">分享</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--%>
                 <a href="###">约拍</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="###">模特</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="###">摄影师</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -315,7 +315,7 @@
             <% for (int i = 1; i <= noOfPages; i++) { %>
             <%-- 如果是当前页，不生成链接，只显示页码 --%>
             <% if (i == currentPage) { %>
-            <%= i %>
+            <a style="pointer-events: none;background-color: grey" href="post?action=search&keyword=<%=keyword%>&page=<%= i %>&keyword=<%= keyword %>"><%= i %></a>
             <% } else { %>
             <%-- 如果不是当前页，生成链接，传递页码和关键字参数 --%>
             <a href="post?action=search&keyword=<%=keyword%>&page=<%= i %>&keyword=<%= keyword %>"><%= i %></a>
@@ -323,7 +323,7 @@
             <% } %>
 
             <%-- 如果当前页码不是最后一页，显示下一页链接 --%>
-            <% if (currentPage != noOfPages) { %>
+            <% if ( currentPage < noOfPages) { %>
             <a href="post?action=search&keyword=<%=keyword%>&page=<%= currentPage + 1 %>">下一页</a>
             <% } %>
         </div>

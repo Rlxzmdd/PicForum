@@ -57,6 +57,9 @@ public class PostInfoServlet extends HttpServlet {
             case "delete":   // 如果action为delete，则调用删除方法
                 delete(request, response);
                 break;
+            case "deleteReply":   // 如果action为delete，则调用删除方法
+                deleteReply(request, response);
+                break;
             case "search":
                 search(request, response);
                 break;
@@ -118,19 +121,27 @@ public class PostInfoServlet extends HttpServlet {
     private void listByPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取页码参数
         String pageStr = request.getParameter("page");
+        String sizeStr = request.getParameter("size");
         // 验证页码是否为空或非数字
         if (pageStr == null || pageStr.isEmpty()) {
             // 返回错误信息
             response.sendError(400, "Page number is required");
             return;
         }
+        if (sizeStr == null || sizeStr.isEmpty()) {
+            // 返回错误信息
+            response.sendError(400, "Size number is required");
+            return;
+        }
         int page = 0;
+        int size = 4;
         try {
             page = Integer.parseInt(pageStr);
+            size = Integer.parseInt(sizeStr);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             // 返回错误信息
-            response.sendError(400, "Page number must be a number");
+            response.sendError(400, "Page,Size number must be a number");
             return;
         }
         // 获取类型参数
@@ -141,7 +152,7 @@ public class PostInfoServlet extends HttpServlet {
             type = "all";
         }
         // 调用数据库操作类，根据页码和类型查询帖子列表数据，返回一个List<PostInfo>对象
-        List<PostInfo> postList = dao.getPostListByPageAndType(page,5, type);
+        List<PostInfo> postList = dao.getPostListByPageAndType(page,size, type);
         // 设置响应内容类型为json
         response.setContentType("application/json;charset=utf-8");
         // 获取响应输出流
@@ -177,7 +188,7 @@ public class PostInfoServlet extends HttpServlet {
             return;
         }
         // 定义每页显示的记录数
-        int recordsPerPage = 10;
+        int recordsPerPage = 5;
         // 调用数据库操作类，根据关键字和页码模糊查询帖子列表数据，返回一个List<PostInfo>对象
         List<PostInfo> postList = dao.getPostListByKeywordAndPage(keyword, (page - 1) * recordsPerPage, recordsPerPage);
         // 调用数据库操作类，根据关键字查询符合条件的总记录数
@@ -256,15 +267,20 @@ public class PostInfoServlet extends HttpServlet {
             return;
         }
         // 获取发帖用户id参数（这里假设已经登录，从session中获取）
-        int postUid = (int) request.getSession().getAttribute("uid");
+//        int postUid = (int) request.getSession().getAttribute("uid");
         // 获取发帖用户名参数（这里假设已经登录，从session中获取）
-        String postName = (String) request.getSession().getAttribute("username");
+//        String postName = (String) request.getSession().getAttribute("username");
+        User user = (User) request.getSession().getAttribute("user");
+        if(user == null){
+            response.sendError(400, "请先进行登录");
+            return;
+        }
         // 封装PostInfoReply对象
         PostInfoReply reply = new PostInfoReply();
         reply.setPid(pid);
         reply.setContent(content);
-        reply.setPostUid(postUid);
-        reply.setPostName(postName);
+        reply.setPostUid(user.getUid());
+        reply.setPostName(user.getUsername());
         // 调用数据库操作类，添加回复数据，返回是否成功的标志
         boolean result = dao.addNewReply(reply);
         if (result) {
@@ -315,7 +331,9 @@ public class PostInfoServlet extends HttpServlet {
         boolean result = dao.addNewPost(post);
         if (result) {
             // 如果成功，重定向到列表页面（传递分类参数）
-            response.sendRedirect("post?action=list&type=" + type);
+//            response.sendRedirect("post?action=detail&pid="+post.getPid());
+            // todo 跳转到新发的文章
+            response.sendRedirect("my.jsp");
         } else {
             // 如果失败，返回错误信息
             response.sendError(500, "Add failed");
@@ -345,7 +363,37 @@ public class PostInfoServlet extends HttpServlet {
         boolean result = dao.deletePostByPid(pid);
         if (result) {
             // 如果成功，重定向到列表页面（不传递分类参数，默认为all）
-            response.sendRedirect("post?action=list");
+            response.sendRedirect("my.jsp");
+        } else {
+            // 如果失败，返回错误信息
+            response.sendError(500, "Delete failed");
+        }
+    }
+
+    // 删除回复方法
+    private void deleteReply(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 获取回复id参数
+        String pidStr = request.getParameter("rid");
+        // 验证帖子id是否为空或非数字
+        if (pidStr == null || pidStr.isEmpty()) {
+            // 返回错误信息
+            response.sendError(400, "Post id is required");
+            return;
+        }
+        int rid = 0;
+        try {
+            rid = Integer.parseInt(pidStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            // 返回错误信息
+            response.sendError(400, "Post id must be a number");
+            return;
+        }
+        // 调用数据库操作类，删除帖子数据，返回是否成功的标志
+        boolean result = dao.deletePostReplyByPid(rid);
+        if (result) {
+            // 如果成功，重定向到列表页面（不传递分类参数，默认为all）
+            response.sendRedirect("my.jsp");
         } else {
             // 如果失败，返回错误信息
             response.sendError(500, "Delete failed");

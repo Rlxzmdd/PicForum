@@ -165,7 +165,7 @@
             background-color: #fff;
             padding: 20px;
             margin: 10px;
-            width: calc((100% - 40px) / 2); /* Two columns layout with 20px margin on both sides */
+            width: calc((100% - 80px) / 2);
             height: 500px;
             float: left;
             text-align: center;
@@ -285,7 +285,7 @@
 
             <div class="menu">
                 <a href="index.jsp">首页</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="post_list.jsp">分享</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--                <a href="post_list.jsp">分享</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--%>
                 <a href="###">约拍</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="###">模特</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="###">摄影师</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -379,8 +379,8 @@
     <div class="reply-card" style="margin: 10px; padding: 10px;"><p>暂无帖子</p></div>
 <% } else { %>
 <%-- 遍历帖子列表，显示每个帖子的标题，内容，类型，更新时间和删除链接 --%>
-<% for (PostInfo post : postList) { %>
     <div class="column" >
+<% for (PostInfo post : postList) { %>
     <a href="post?action=detail&pid=<%= post.getPid() %>">
 <div class="post-card"style="margin: 10px; padding: 10px;">
       <img src="image/image1.jpeg">
@@ -392,16 +392,15 @@
         </p>
         <p class="post-date"><%= post.getTimeUpdate() %>
         </p>
-
     <%-- 显示删除链接，跳转到PostInfoServlet的delete方法，并传递帖子id参数 --%>
-    <a class="delete" href="PostInfoServlet?method=delete&pid=<%= post.getPid() %> ">删除</a>
+    <a class="delete" href="post?action=delete&pid=<%= post.getPid() %> ">删除</a>
 
 </div>
     </a>
-    </div>
 
 <% } %>
 
+    </div>
 <% } %>
 
     <%-- 显示用户发布的回复列表 --%>
@@ -426,7 +425,7 @@
         <p class="reply-date"><%= reply.getTimeUpdate() %>
         </p>
         <%-- 显示删除链接，跳转到PostInfoServlet的deleteReply方法，并传递回复id参数 --%>
-        <a class="delete" href="PostInfoServlet?method=deleteReply&rid=<%=reply.getRid()%>">删除</a>
+        <a class="delete" href="post?action=deleteReply&rid=<%=reply.getRid()%>">删除</a>
     </div>
 
     <% } %>

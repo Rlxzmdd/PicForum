@@ -2,6 +2,7 @@ package com.example.picforum.dao;
 
 
 import com.example.picforum.model.User;
+import sun.rmi.runtime.Log;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,6 +38,10 @@ public class UserDao extends DAO {
                 user.setPassword(rs.getString("password"));
                 user.setTimeRegister(rs.getTimestamp("time_register"));
                 user.setTimeLastLogin(rs.getTimestamp("time_last_login"));
+                String sql2 = "UPDATE pic_user SET time_last_login = NOW() WHERE uid = "+user.getUid();
+                ps = conn.prepareStatement(sql2);
+                int rs_new = ps.executeUpdate();
+                //System.out.print(rs_new);
             }
         } catch (SQLException e) {
             e.printStackTrace();

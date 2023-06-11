@@ -187,7 +187,7 @@
 
 <%-- 显示添加回复的表单，提交到PostInfoServlet的reply方法 --%>
 <h2>添加回复</h2>
-<form action="post?method=reply" method="post">
+<form action="post?action=reply" method="post">
     <%-- 隐藏域，传递帖子id --%>
     <input type="hidden" name="pid" value="<%= post.getPid() %>">
     <textarea name="content" id="content" rows="5" cols="50"></textarea><br/>
