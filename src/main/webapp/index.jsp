@@ -294,12 +294,12 @@
     </div>
 
     <%-- 显示帖子类型选择框，单选框的值对应数据库中的type字段 --%>
-    <div style="margin: 10px;">
-        帖子类型：
-        <input type="radio" name="type" value="" checked>全部
-        <input type="radio" name="type" value="show">分享
-        <input type="radio" name="type" value="apo">约拍
-    </div>
+<%--    <div style="margin: 10px;">--%>
+<%--        帖子类型：--%>
+<%--        <input type="radio" name="type" value="" checked>全部--%>
+<%--        <input type="radio" name="type" value="show">分享--%>
+<%--        <input type="radio" name="type" value="apo">约拍--%>
+<%--    </div>--%>
     <%-- 创建数据库操作对象 --%>
     <% PostInfoDao postInfoDao = new PostInfoDao(); %>
 
@@ -317,7 +317,7 @@
     <div id="post-list">
         <% for (PostInfo post : postList) { %>
             <div class="post-card" style="margin: 10px; padding: 10px;">
-                <img src="image/image<%=post.getPid()%>.jpg">
+                <img src="image/image<%=post.getPid()%5+1%>.jpg">
                 <p class="post-title"><%= post.getTitle() %>
                 </p>
                 <p class="post-content"><%= post.getContent() %>
@@ -382,7 +382,9 @@
                         var html = "";
                         for (var i = 0; i < data.length; i++) {
                             var post = data[i];
-                            html += '<div class="post-card" style="margin: 10px; padding: 10px;"> <img src="#">';
+                            console.log(post)
+                            html += '<div class="post-card" style="margin: 10px; padding: 10px;">';
+                            html += '<img src="image/image'+(post.pid%5+1)+'.jpg">';
                             html += '<p class="post-title">' + post.title + '</p>';
                             html += '<p class="post-content">' + post.content + '</p>';
                             html += '<p class="post-type">' + (post.type=="show"?"分享":"约拍") + '</p>';

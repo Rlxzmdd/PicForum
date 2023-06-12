@@ -270,12 +270,12 @@
         <h2>帖子列表</h2>
 
         <%-- 显示帖子类型选择框，单选框的值对应数据库中的type字段 --%>
-        <div style="margin: 10px;">
-            帖子类型：
-            <input type="radio" name="type" value="" checked>全部
-            <input type="radio" name="type" value="show">分享
-            <input type="radio" name="type" value="apo">约拍
-        </div>
+<%--        <div style="margin: 10px;">--%>
+<%--            帖子类型：--%>
+<%--            <input type="radio" name="type" value="" checked>全部--%>
+<%--            <input type="radio" name="type" value="show">分享--%>
+<%--            <input type="radio" name="type" value="apo">约拍--%>
+<%--        </div>--%>
 <%-- 判断帖子列表是否为空 --%>
 <% if (postList == null || postList.isEmpty()) { %>
 
@@ -287,7 +287,7 @@
 <% for (PostInfo post : postList) { %>
         <div class="column" >
             <div class="post-card" style="margin: 10px; padding: 10px;">
-                <img src="image/image<%=post.getPid()%>>.jpg">
+                <img src="image/image<%=post.getPid()%5+1%>.jpg">
                 <p class="post-title"><%= post.getTitle() %></p>
                 <p class="post-content"><%= post.getContent() %></p>
                 <p class="post-type"><%= post.getType() %></p>
