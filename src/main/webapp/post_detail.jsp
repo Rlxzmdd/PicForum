@@ -149,7 +149,7 @@
 <%-- 显示帖子标题，内容，类型，发帖用户名和更新时间 --%>
 
 <div class="img_container">
-        <div class="item"><img src="image/image<%=post.getPid()%>.jpg" /></div>
+        <div class="item"><img src="image/image<%=post.getPid()%5+1%>.jpg" /></div>
 <%--        <div class="item"><img src="image/image2.jpg" /></div>--%>
 <%--        <div class="item"><img src="image/image1.jpg" /></div>--%>
 </div>

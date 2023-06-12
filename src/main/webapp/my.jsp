@@ -347,20 +347,20 @@
                 </table>
         </div>
     </div>
-    <h2>修改我的信息</h2>
+<%--    <h2>修改我的信息</h2>--%>
 
-        <div class="card">
-            <table align="center">
+<%--        <div class="card">--%>
+<%--            <table align="center">--%>
 
-                <form action="user?action=update" method="post">
-                    <%-- 隐藏域，传递用户id --%>
-                    <input type="hidden" name="uid" value="<%= user.getUid() %>">
-                        <tr><td align="right">用户名：</td><td><input type="text" name="username" value="<%= user.getUsername() %>"></td></tr><br/>
-                        <tr><td align="right">密码：</td><td><input type="password" name="password" value="<%= user.getPassword() %>"></td></tr><br/>
-                        <tr><td colspan="2"><input type="submit" value="保存"></td></tr>
-                </form>
-            </table>
-        </div>
+<%--                <form action="user?action=update" method="post">--%>
+<%--                    &lt;%&ndash; 隐藏域，传递用户id &ndash;%&gt;--%>
+<%--                    <input type="hidden" name="uid" value="<%= user.getUid() %>">--%>
+<%--                        <tr><td align="right">用户名：</td><td><input type="text" name="username" value="<%= user.getUsername() %>"></td></tr><br/>--%>
+<%--                        <tr><td align="right">密码：</td><td><input type="password" name="password" value="<%= user.getPassword() %>"></td></tr><br/>--%>
+<%--                        <tr><td colspan="2"><input type="submit" value="保存"></td></tr>--%>
+<%--                </form>--%>
+<%--            </table>--%>
+<%--        </div>--%>
 
 </div>
 
@@ -383,7 +383,7 @@
 <% for (PostInfo post : postList) { %>
     <a href="post?action=detail&pid=<%= post.getPid() %>">
 <div class="post-card"style="margin: 10px; padding: 10px;">
-      <img src="image/image5.jpg">
+      <img src="image/image<%= post.getPid()%5+1 %>.jpg">
         <p class="post-title"><%= post.getTitle() %>
         </p>
         <p class="post-content"><%= post.getContent() %>

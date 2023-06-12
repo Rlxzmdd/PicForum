@@ -103,7 +103,7 @@ public class UserServlet extends HttpServlet {
         user.setPassword(password);
         userDao.insertUser(user);
         // 将用户对象存入session中
-        request.getSession().setAttribute("user", user);
+        request.getSession().setAttribute("user", userDao.getUserByUsernameAndPassword(username, password));
         // 重定向到主页
         response.sendRedirect("index.jsp");
     }
